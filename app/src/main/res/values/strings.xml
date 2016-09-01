@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Benefit</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_card_number">Card Number</string>
+    <string name="prompt_nik_password">NIK Number</string>
+    <string name="action_sign_in">Saldo</string>
+    <string name="action_sign_in_short">Login</string>
+    <string name="error_invalid_card_number">Card number is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+    <string name="unexpected_error_msg">Unexpected error, try later</string>
+</resources>

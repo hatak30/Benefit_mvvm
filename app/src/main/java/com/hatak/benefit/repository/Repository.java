@@ -1,0 +1,150 @@
+package com.hatak.benefit.repository;
+
+import android.content.Context;
+import android.support.annotation.NonNull;
+
+import com.google.common.base.Optional;
+import com.hatak.benefit.login.UIUser;
+import com.hatak.benefit.saldo.Saldo;
+import com.hatak.benefit.saldo.SaldoParser;
+import com.hatak.benefit.saldo.Transaction;
+import com.loopj.android.http.MySSLSocketFactory;
+import com.loopj.android.http.SyncHttpClient;
+import com.loopj.android.http.TextHttpResponseHandler;
+
+import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
+import java.util.List;
+
+import cz.msebera.android.httpclient.Header;
+import cz.msebera.android.httpclient.entity.StringEntity;
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
+import rx.Observable;
+import rx.Subscriber;
+
+/**
+ * Created by hatak on 22.08.16.
+ */
+public class Repository {
+
+    private static final String CARD_NUMBER = "CARD_NUMBER";
+    private static final String NIK_NUMBER = "NIK_NUMBER";
+    private static final String FORM_DATA = "AuthenticationMethod=UsernameAuthenticator&BackURL=%2Fsaldo&Username=CARD_NUMBER&Password=NIK_NUMBER&action_dologin.x=51&action_dologin.y=14";
+    private static final String URL = "https://www.mypremium.pl/Security/LoginForm";
+    private static final String CONTENT_TYPE = "application/x-www-form-urlencoded";
+
+    //String cardNumber = "4405720878006762";
+    //String nikNumber = "2083883";
+
+    private static Repository instance;
+    private Context appContext;
+
+    public static void initialize(final Context context) {
+        if (instance == null) {
+            RealmConfiguration config = new RealmConfiguration.Builder(context.getApplicationContext())
+                    .deleteRealmIfMigrationNeeded()
+                    .build();
+            Realm.setDefaultConfiguration(config);
+            instance = new Repository();
+            instance.appContext = context.getApplicationContext();
+        }
+    }
+
+    public static Repository getInstance() {
+        if (instance != null) {
+            return instance;
+        } else {
+            throw new RuntimeException("Initialize repository first");
+        }
+    }
+
+    public Observable<Boolean> saveUser(final User user) {
+        return Observable.create((Observable.OnSubscribe<Boolean>) subscriber -> {
+            final Realm realm = Realm.getDefaultInstance();
+            realm.beginTransaction();
+            realm.insertOrUpdate(user);
+            realm.commitTransaction();
+            realm.close();
+            subscriber.onNext(Boolean.TRUE);
+            subscriber.onCompleted();
+        });
+    }
+
+    public Observable<UIUser> loadUser(){
+        return Observable.create(new Observable.OnSubscribe<Optional<User>>() {
+            @Override
+            public void call(final Subscriber<? super Optional<User>> subscriber) {
+                final Realm realm = Realm.getDefaultInstance();
+                final User user = realm
+                        .where(User.class)
+                        .equalTo("id", User.DEFAULT_ID)
+                        .findFirst();
+                subscriber.onNext(Optional.fromNullable(user));
+                subscriber.onCompleted();
+                realm.close();
+            }
+        }).map(user -> {
+            if(user.isPresent()){
+                return new UIUser(user.get().getCardNumber(), user.get().getNikNumber());
+            }else{
+                return UIUser.createEmpty();
+            }
+        });
+    }
+
+    public Observable<Saldo> getSaldo(final String cardNumber, final String nikNumber){
+        return Observable.create((Observable.OnSubscribe<Saldo>) subscriber -> {
+            try {
+                SyncHttpClient client = getUnsafeSyncHttpClient();
+                StringEntity form = new StringEntity(FORM_DATA.replace(CARD_NUMBER, cardNumber).replace(NIK_NUMBER, nikNumber));
+                client.post(appContext, URL, form, CONTENT_TYPE, new TextHttpResponseHandler() {
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                        subscriber.onError(throwable);
+                    }
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, String html) {
+                        final String saldoValue = SaldoParser.getSaldoValue(html);
+                        final List<Transaction> transactions = SaldoParser.getTransactions(html);
+                        Saldo saldo = new Saldo(saldoValue, transactions);
+                        subscriber.onNext(saldo);
+                        subscriber.onCompleted();
+                    }
+                });
+            } catch (Exception e) {
+                subscriber.onError(e);
+            }
+        });
+    }
+
+    public void migrateIfNeeded(){
+        RepositoryMigrator repositoryMigrator = new RepositoryMigrator();
+        repositoryMigrator.migrateUserData(appContext);
+    }
+
+    @NonNull
+    private SyncHttpClient getUnsafeSyncHttpClient() throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException, KeyManagementException, UnrecoverableKeyException {
+        // We initialize a default Keystore
+        KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
+        // We load the KeyStore
+        trustStore.load(null, null);
+        // We initialize a new SSLSocketFactory
+        MySSLSocketFactory socketFactory = new MySSLSocketFactory(trustStore);
+        // We set that all host names are allowed in the socket factory
+        socketFactory.setHostnameVerifier(MySSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+        // We initialize the Async Client
+        SyncHttpClient client = new SyncHttpClient();
+        // We set the timeout to 30 seconds
+        client.setTimeout(30*1000);
+        // We set the SSL Factory
+        client.setSSLSocketFactory(socketFactory);
+        client.setEnableRedirects(true);
+        return client;
+    }
+}

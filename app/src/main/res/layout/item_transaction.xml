@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="com.hatak.benefit.saldo.TransactionViewModel"/>
+    </data>
+
+    <android.support.v7.widget.CardView
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/card_view"
+        android:layout_gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        card_view:cardCornerRadius="2dp"
+        card_view:contentPadding="10dp"
+        android:layout_margin="5dp"
+        >
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp">
+
+            <TextView
+                android:id="@+id/price_text"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@{viewModel.price}"/>
+            <TextView
+                android:id="@+id/date_text"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@{viewModel.date}"/>
+            <TextView
+                android:id="@+id/type_text"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@{viewModel.type}"/>
+            <TextView
+                android:id="@+id/place_text"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@{viewModel.place}"/>
+
+        </LinearLayout>
+
+    </android.support.v7.widget.CardView>
+
+</layout>
+
