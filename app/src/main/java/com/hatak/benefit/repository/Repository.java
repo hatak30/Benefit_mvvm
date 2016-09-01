@@ -39,9 +39,6 @@ public class Repository {
     private static final String URL = "https://www.mypremium.pl/Security/LoginForm";
     private static final String CONTENT_TYPE = "application/x-www-form-urlencoded";
 
-    //String cardNumber = "4405720878006762";
-    //String nikNumber = "2083883";
-
     private static Repository instance;
     private Context appContext;
 
