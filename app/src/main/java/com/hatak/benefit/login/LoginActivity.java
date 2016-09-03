@@ -6,6 +6,7 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 
@@ -24,6 +25,7 @@ public class LoginActivity extends AppCompatActivity implements LoginHandler, Lo
     private ActivityLoginBinding binding;
     private LoginViewModel viewModel;
     private LoginPresenter loginPresenter;
+    private String TAG = "LoginActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +71,7 @@ public class LoginActivity extends AppCompatActivity implements LoginHandler, Lo
 
     @Override
     public void onError(final Throwable throwable) {
+        Log.e(TAG, throwable.getMessage(), throwable);
         Snackbar.make(binding.cardNumber, R.string.unexpected_error_msg, Snackbar.LENGTH_SHORT).show();
     }
 

@@ -23,4 +23,21 @@ public class Saldo implements Serializable{
     public List<Transaction> getTransactions() {
         return transactions;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Saldo saldo1 = (Saldo) o;
+
+        if (saldo != null ? !saldo.equals(saldo1.saldo) : saldo1.saldo != null) return false;
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = saldo != null ? saldo.hashCode() : 0;
+        return result;
+    }
 }

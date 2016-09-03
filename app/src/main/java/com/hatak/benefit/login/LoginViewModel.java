@@ -79,6 +79,7 @@ public class LoginViewModel extends BaseObservable{
     }
 
     public void setError(final Throwable saldoError) {
+        loginListener.onError(saldoError);
     }
 
     public interface LoginListener {
