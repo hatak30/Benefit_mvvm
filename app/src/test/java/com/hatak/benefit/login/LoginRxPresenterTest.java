@@ -3,27 +3,15 @@ package com.hatak.benefit.login;
 import com.hatak.benefit.repository.Repository;
 import com.hatak.benefit.saldo.Saldo;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-import org.junit.experimental.theories.internal.BooleanSupplier;
 import org.mockito.Mockito;
-import org.mockito.internal.listeners.CollectCreatedMocks;
-import org.mockito.stubbing.Answer;
 
 import java.util.Collections;
-import java.util.IllegalFormatCodePointException;
 
 import rx.Observable;
-import rx.Scheduler;
-import rx.android.plugins.RxAndroidPlugins;
-import rx.android.plugins.RxAndroidSchedulersHook;
-import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -33,6 +21,9 @@ import static org.mockito.Mockito.when;
  * TomTom
  */
 public class LoginRxPresenterTest {
+
+    public static final String TEST_CARD_NUMBER = "card";
+    public static final String TEST_NIK_NUMBER = "nik";
 
     @Test
     public void shouldLoginByCredencialUsedFromRepoButSaldoFails() throws Exception {
@@ -89,8 +80,33 @@ public class LoginRxPresenterTest {
 
 
     @Test
-    public void onStart() throws Exception {
-
+    public void testShouldStartApplicationFirstTimeAndLoadEmptyUser() throws Exception {
+        //Given a login presenter and viewModel mock.
+        Repository mockRepository = mock(Repository.class);
+        when(mockRepository.loadUser()).thenReturn(Observable.just(UIUser.createEmpty()));
+        LoginViewModel mockLoginViewModel = Mockito.mock(LoginViewModel.class);
+        LoginPresenter loginPresenter = new LoginRxPresenter(mockRepository, Schedulers.immediate(), Schedulers.immediate());
+        //When start application
+        loginPresenter.onStart(mockLoginViewModel);
+        //Then
+        verify(mockLoginViewModel).formStarted();
+        verify(mockLoginViewModel).setCardNumber("");
+        verify(mockLoginViewModel).setNikNumber("");
     }
 
+
+    @Test
+    public void testShouldStartApplicationNextTimeAndLoadNotEmptyUser() throws Exception {
+        //Given a login presenter and viewModel mock.
+        Repository mockRepository = mock(Repository.class);
+        when(mockRepository.loadUser()).thenReturn(Observable.just(new UIUser(TEST_CARD_NUMBER, TEST_NIK_NUMBER)));
+        LoginViewModel mockLoginViewModel = Mockito.mock(LoginViewModel.class);
+        LoginPresenter loginPresenter = new LoginRxPresenter(mockRepository, Schedulers.immediate(), Schedulers.immediate());
+        //When start application
+        loginPresenter.onStart(mockLoginViewModel);
+        //Then
+        verify(mockLoginViewModel).formStarted();
+        verify(mockLoginViewModel).setCardNumber(TEST_CARD_NUMBER);
+        verify(mockLoginViewModel).setNikNumber(TEST_NIK_NUMBER);
+    }
 }
