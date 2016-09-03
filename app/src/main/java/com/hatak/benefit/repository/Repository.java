@@ -38,6 +38,8 @@ public class Repository {
     private static final String FORM_DATA = "AuthenticationMethod=UsernameAuthenticator&BackURL=%2Fsaldo&Username=CARD_NUMBER&Password=NIK_NUMBER&action_dologin.x=51&action_dologin.y=14";
     private static final String URL = "https://www.mypremium.pl/Security/LoginForm";
     private static final String CONTENT_TYPE = "application/x-www-form-urlencoded";
+    public static final String KEY_ID = "id";
+    public static final int TIMEOUT = 30 * 1000; // 30 sec
 
     private static Repository instance;
     private Context appContext;
@@ -62,7 +64,7 @@ public class Repository {
     }
 
     public Observable<Boolean> saveUser(final User user) {
-        return Observable.create((Observable.OnSubscribe<Boolean>) subscriber -> {
+        return Observable.create(subscriber -> {
             final Realm realm = Realm.getDefaultInstance();
             realm.beginTransaction();
             realm.insertOrUpdate(user);
@@ -80,7 +82,7 @@ public class Repository {
                 final Realm realm = Realm.getDefaultInstance();
                 final User user = realm
                         .where(User.class)
-                        .equalTo("id", User.DEFAULT_ID)
+                        .equalTo(KEY_ID, User.DEFAULT_ID)
                         .findFirst();
                 subscriber.onNext(Optional.fromNullable(user));
                 subscriber.onCompleted();
@@ -96,7 +98,7 @@ public class Repository {
     }
 
     public Observable<Saldo> getSaldo(final String cardNumber, final String nikNumber){
-        return Observable.create((Observable.OnSubscribe<Saldo>) subscriber -> {
+        return Observable.create(subscriber -> {
             try {
                 SyncHttpClient client = getUnsafeSyncHttpClient();
                 StringEntity form = new StringEntity(FORM_DATA.replace(CARD_NUMBER, cardNumber).replace(NIK_NUMBER, nikNumber));
@@ -138,7 +140,7 @@ public class Repository {
         // We initialize the Async Client
         SyncHttpClient client = new SyncHttpClient();
         // We set the timeout to 30 seconds
-        client.setTimeout(30*1000);
+        client.setTimeout(TIMEOUT);
         // We set the SSL Factory
         client.setSSLSocketFactory(socketFactory);
         client.setEnableRedirects(true);
