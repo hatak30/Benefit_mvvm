@@ -1,5 +1,6 @@
 package com.hatak.benefit.login;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -27,11 +28,11 @@ public class LoginActivity extends AppCompatActivity implements LoginHandler, Lo
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_login);
+        binding = DataBindingUtil.setContentView((Activity) this, R.layout.activity_login);
         viewModel = new LoginViewModel(this);
         binding.setViewModel(viewModel);
         binding.setHandler(this);
-        loginPresenter = new LoginPresenter();
+        loginPresenter = new LoginRxPresenter();
     }
 
     @Override
