@@ -33,6 +33,8 @@ gradlew.bat
 .idea/runConfigurations.xml
 *.iml
 
+local.properties
+
 # OS-specific files
 .DS_Store
 .DS_Store?
