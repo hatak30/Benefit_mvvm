@@ -8,8 +8,6 @@ import android.support.v7.widget.RecyclerView;
 
 import com.hatak.benefit.R;
 import com.hatak.benefit.databinding.ActivitySaldoBinding;
-import com.hatak.benefit.login.LoginPresenter;
-import com.hatak.benefit.login.LoginViewModel;
 
 import java.util.List;
 

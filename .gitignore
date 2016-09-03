@@ -17,6 +17,7 @@ gradlew.bat
 .signing/
 
 # User-specific configurations
+.idea/
 .idea/libraries/
 .idea/workspace.xml
 .idea/tasks.xml
@@ -31,6 +32,8 @@ gradlew.bat
 .idea/gradle.xml
 .idea/runConfigurations.xml
 *.iml
+
+local.properties
 
 # OS-specific files
 .DS_Store
