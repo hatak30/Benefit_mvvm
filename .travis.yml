@@ -24,4 +24,5 @@ android:
     - sys-img-armeabi-v7a-android-17
 
 script:
+    chmod +x ./gradlew
     ./gradlew assDebug
