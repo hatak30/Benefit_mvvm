@@ -13,14 +13,28 @@ import rx.schedulers.Schedulers;
  */
 public class LoginRxPresenter implements LoginPresenter {
 
+    private Repository repository;
+
+    public LoginRxPresenter() {
+        repository = Repository.getInstance();
+    }
+
+    public LoginRxPresenter(Repository repository) {
+        this.repository = repository;
+    }
+
+    public Repository getRepo(){
+        return repository;
+    }
+
     public void onLogin(final LoginViewModel viewModel) {
         viewModel.loginStarted();
         final User user = new User(viewModel.getCardNumber(), viewModel.getNikNumber());
-        Repository.getInstance()
+        getRepo()
                 .saveUser(user)
                 .subscribeOn(Schedulers.io())
                 .subscribe(aBoolean -> {
-                    Repository.getInstance()
+                    getRepo()
                             .getSaldo(user.getCardNumber(), user.getNikNumber())
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
@@ -32,7 +46,7 @@ public class LoginRxPresenter implements LoginPresenter {
 
     public void onStart(final LoginViewModel viewModel) {
         viewModel.formStarted();
-        Repository.getInstance()
+        getRepo()
                 .loadUser()
                 .subscribeOn(Schedulers.io())
                 .subscribe(uiUser -> {
