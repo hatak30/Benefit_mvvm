@@ -29,5 +29,6 @@ android:
 
 script:
     - chmod +x ./gradlew
-    - ./gradlew clean jacocoTestReportDebug 
+    - ./gradlew clean jacocoTestReportDebug
+    - cp app/build/reports/jacoco/debug/jacoco.xml app/build/reports/jacoco/test/jacocoTestReport.xml 
     - ./gradlew coveralls
