@@ -30,5 +30,6 @@ android:
 script:
     - chmod +x ./gradlew
     - ./gradlew clean jacocoTestReportDebug
+    - mkdir -p app/build/reports/jacoco/test/
     - cp app/build/reports/jacoco/debug/jacoco.xml app/build/reports/jacoco/test/jacocoTestReport.xml 
     - ./gradlew coveralls
