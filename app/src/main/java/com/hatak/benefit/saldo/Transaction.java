@@ -42,13 +42,4 @@ public class Transaction implements Serializable{
     public void setPlace(final String place) {
         this.place = place;
     }
-
-    public static Transaction create(final String price, final String date, final String type, final String place){
-        Transaction transaction = new Transaction();
-        transaction.price = price;
-        transaction.date = date;
-        transaction.type = type;
-        transaction.place = place;
-        return transaction;
-    }
 }

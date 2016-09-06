@@ -1,7 +1,10 @@
 package com.hatak.benefit.repository;
 
+import android.text.TextUtils;
+
 import com.hatak.benefit.R;
 import com.hatak.benefit.saldo.Saldo;
+import com.hatak.benefit.saldo.Transaction;
 
 import org.apache.commons.io.IOUtils;
 import static org.junit.Assert.*;
@@ -45,7 +48,13 @@ public class RepositoryTest {
                 .first();
 
         assertTrue(saldo.getSaldo().contains("100,04"));
-        assertTrue(saldo.getTransactions().size() > 1);
+        assertTrue(saldo.getTransactions().size() == 3);
+
+        final Transaction transaction = saldo.getTransactions().get(0);
+        assertTrue(!TextUtils.isEmpty(transaction.getDate()));
+        assertTrue(!TextUtils.isEmpty(transaction.getPlace()));
+        assertTrue(!TextUtils.isEmpty(transaction.getPrice()));
+        assertTrue(!TextUtils.isEmpty(transaction.getType()));
 
         server.shutdown();
     }
