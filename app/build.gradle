@@ -1,12 +1,11 @@
 apply plugin: 'com.android.application'
-apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'realm-android'
 apply plugin: 'com.vanniktech.android.junit.jacoco'
 apply plugin: 'com.github.kt3k.coveralls'
 
 android {
-    compileSdkVersion 24
-    buildToolsVersion "24.0.1"
+    compileSdkVersion 25
+    buildToolsVersion '25.0.2'
 
     defaultConfig {
         applicationId "com.hatak.benefit"
@@ -39,6 +38,13 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/notice.txt'
+    }
 }
 
 
@@ -50,11 +56,10 @@ tasks.withType(Test) {
 }
 
 ext{
-    supportVersion = "24.1.1"
+    supportVersion = "25.3.1"
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
 
     // support
@@ -69,7 +74,7 @@ dependencies {
     compile 'io.reactivex:rxjava:1.1.9'
 
     // guava
-    compile group: 'com.google.guava', name: 'guava', version: '19.0'
+    compile group: 'com.google.guava', name: 'guava', version: '21.0'
 
     // animations
     compile 'com.nineoldandroids:library:2.4.0'
@@ -77,12 +82,13 @@ dependencies {
     compile 'com.daimajia.androidanimations:library:1.1.3@aar'
 
     // loopJ + parsing
-    compile 'org.jsoup:jsoup:1.8.3'
+    compile 'org.jsoup:jsoup:1.10.2'
     compile 'com.loopj.android:android-async-http:1.4.9'
-    compile group: 'org.apache.commons', name: 'commons-io', version: '1.3.2'
+//    compile group: 'org.apache.commons', name: 'commons-io', version: '1.3.2'
 
     //Java Unit test
     provided 'org.glassfish:javax.annotation:10.0-b28'
+
     testCompile 'org.easytesting:fest-assert-core:2.0M10'
     testCompile 'cglib:cglib-nodep:3.1'
     testCompile 'org.mockito:mockito-all:1.9.5'
